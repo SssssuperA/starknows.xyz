@@ -1,7 +1,7 @@
 """Append new inbox PDFs to the index without rebuilding hand-corrected entries.
 
 Usage: python3 tools/add_reports_incremental.py overrides.json
-overrides.json maps a filename to manual fields (category, secondary_categories,
+overrides.json maps a filename to manual fields (title, category, secondary_categories,
 organization, year, industry, institutionType, fileType). Text for highlights and
 excerpts is taken from knowledge/fulltext (so OCR-completed pages are used).
 """
@@ -39,7 +39,7 @@ for name, manual in overrides.items():
     sample_ids = sorted(set(range(min(8, len(pages)))) | set(range(max(0, len(pages) - 2), len(pages))))
     page_samples = [{'page': pages[i]['page'], 'text': clean_text(pages[i]['text'])[:9000]} for i in sample_ids]
     sample = clean_text('\n'.join(pages[i]['text'] for i in range(min(8, len(pages)))))
-    title = path.stem
+    title = manual.get('title', path.stem)
     auto_cat, auto_sec = classify(title, sample)
     category = manual.get('category', auto_cat)
     secondary = manual.get('secondary_categories', auto_sec)
